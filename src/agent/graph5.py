@@ -1,89 +1,76 @@
-import asyncio
+import os
 
+from langchain_openai import ChatOpenAI
 from langchain_mcp_adapters.client import MultiServerMCPClient
-from langgraph.constants import END, START
-from langgraph.graph import MessagesState, StateGraph
-from langgraph.prebuilt import ToolNode, tools_condition
-
-from agent.env_utils import ZHIPU_API_KEY
-from agent.my_llm import llm
+from langgraph.prebuilt import create_react_agent
 
 
-zhipuai_mcp_server_config = {
-    "url": (
-        "https://open.bigmodel.cn/api/mcp/web_search/sse"
-        "?Authorization=" + ZHIPU_API_KEY
+# ============================================================
+# Environment
+# ============================================================
+
+TAVILY_API_KEY = os.environ["TAVILY_API_KEY"]
+OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+OPENAI_BASE_URL = os.environ["OPENAI_BASE_URL"]
+
+
+# ============================================================
+# LLM
+# ============================================================
+
+llm = ChatOpenAI(
+    model=os.getenv(
+        "OPENAI_MODEL",
+        "gpt-4o-mini",
     ),
-    "transport": "sse",
-}
+    api_key=OPENAI_API_KEY,
+    base_url=OPENAI_BASE_URL,
+)
 
+
+# ============================================================
+# MCP Client
+# ============================================================
 
 mcp_client = MultiServerMCPClient(
     {
-        "zhipuai_mcp": zhipuai_mcp_server_config,
+        "tavily": {
+            "url": (
+                "https://mcp.tavily.com/mcp/"
+                f"?tavilyApiKey={TAVILY_API_KEY}"
+            ),
+            "transport": "streamable_http",
+        }
     }
 )
 
 
-class State(MessagesState):
-    pass
+# ============================================================
+# Graph
+# ============================================================
 
-
-async def create_graph():
+async def build_graph():
 
     tools = await mcp_client.get_tools()
 
-    print(f"加载 MCP Tools 数量: {len(tools)}")
+    print("Loaded MCP tools:")
 
-    builder = StateGraph(State)
-
-    llm_with_tools = llm.bind_tools(tools)
-
-    async def chatbot(state: State):
-        response = await llm_with_tools.ainvoke(
-            state["messages"]
+    for tool in tools:
+        print(
+            f"  {tool.name}: "
+            f"{getattr(tool, 'description', '')[:100]}"
         )
 
-        return {
-            "messages": [response]
-        }
-
-    builder.add_node(
-        "chatbot",
-        chatbot
+    return create_react_agent(
+        model=llm,
+        tools=tools,
     )
 
-    tool_node = ToolNode(tools)
 
-    builder.add_node(
-        "tools",
-        tool_node
-    )
+# ============================================================
+# LangGraph API
+# ============================================================
 
-    builder.add_conditional_edges(
-        "chatbot",
-        tools_condition,
-        {
-            "tools": "tools",
-            END: END,
-        },
-    )
+import asyncio
 
-    builder.add_edge(
-        "tools",
-        "chatbot"
-    )
-
-    builder.add_edge(
-        START,
-        "chatbot"
-    )
-
-    graph = builder.compile(
-        interrupt_before=["tools"]
-    )
-
-    return graph
-
-
-graph = asyncio.run(create_graph())
+graph = asyncio.run(build_graph())
