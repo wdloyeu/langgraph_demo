@@ -5,7 +5,7 @@ from langgraph.prebuilt import create_react_agent
 
 from agent.my_llm import llm
 from agent.tools.tool_demo6 import runnable_tool
-from agent.tools.tool_demo7 import MySearchTool
+# from agent.tools.tool_demo7 import MySearchTool
 
 # checkpointer = InMemorySaver() # 短期记忆，保持在内存中
 # checkpointer = InMemoryStore() # 长期记忆，保持在内存中
@@ -62,10 +62,10 @@ with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
     checkpointer.setup() # 第一次运行时执行一次。
     # pip install -U "psycopg[binary,pool]" langgraph langgraph-checkpoint-postgres
     # 这是一个网络搜索的工具
-    search_tool = MySearchTool()
+    # search_tool = MySearchTool()
     agent = create_react_agent(
         llm,
-        tools=[runnable_tool, search_tool],
+        # tools=[runnable_tool, search_tool],
         prompt="你是一个智能助手，尽可能的调用工具回答用户的问题",
         checkpointer=checkpointer,
     )

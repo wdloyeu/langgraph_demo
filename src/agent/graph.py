@@ -11,7 +11,7 @@ from agent.my_llm import llm
 from agent.my_state import CustomState
 from agent.tools.tool_demo3 import calculate
 from agent.tools.tool_demo6 import runnable_tool
-from agent.tools.tool_demo7 import MySearchTool
+# from agent.tools.tool_demo7 import MySearchTool
 from agent.tools.tool_demo8 import get_user_info_by_name
 from agent.tools.tool_demo9 import greet_user, get_user_name
 
@@ -35,7 +35,7 @@ from agent.tools.tool_demo9 import greet_user, get_user_name
 #     prompt="你是智能助手！"
 # )
 # 这是一个网络搜索的工具
-search_tool = MySearchTool()
+# search_tool = MySearchTool()
 
 # 提示词模板的函数： 由用户传入内容，组成一个动态的系统提示词
 def prompt(state: AgentState, config: RunnableConfig) -> list[AnyMessage]:
@@ -48,7 +48,7 @@ def prompt(state: AgentState, config: RunnableConfig) -> list[AnyMessage]:
 graph = create_react_agent(
     llm,
     # tools=[calculate, runnable_tool, search_tool, get_user_info_by_name],
-    tools=[calculate, runnable_tool, search_tool, get_user_name, greet_user],
+    # tools=[calculate, runnable_tool, search_tool, get_user_name, greet_user],
     # prompt="你是一个智能助手，尽可能的调用工具回答用户的问题"
     prompt=prompt,
     state_schema=CustomState, # 指定自定义的状态类
