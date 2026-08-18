@@ -1,28 +1,66 @@
-import sqlite3
-
-from langgraph.checkpoint.postgres import PostgresSaver
-from langgraph.prebuilt import create_react_agent
-
-from agent.my_llm import llm
-from agent.tools.tool_demo6 import runnable_tool
+# import sqlite3
+#
+# from langgraph.checkpoint.postgres import PostgresSaver
+# from langgraph.prebuilt import create_react_agent
+#
+# from agent.my_llm import llm
+# from agent.tools.tool_demo6 import runnable_tool
 # from agent.tools.tool_demo7 import MySearchTool
-
-# checkpointer = InMemorySaver() # 短期记忆，保持在内存中
-# checkpointer = InMemoryStore() # 长期记忆，保持在内存中
-# conn = sqlite3.connect("chat_history.db", check_same_thread=False)
-# checkpointer = SqliteSaver(conn) #需要安装pip install langgraph-checkpoint-sqlite
-
-
-DB_URI = "postgresql://postgres:!!AAaa123@localhost:5432/langgraph_db"
-
-# with (
-#     PostgresStore.from_conn_string(DB_URI) as store,
-#     PostgresSaver.from_conn_string(DB_URI) as checkpointer
-# ):
-#     # checkpointer.setup() # 第一次运行时执行一次。
-#     # store.setup()
+#
+# # checkpointer = InMemorySaver() # 短期记忆，保持在内存中
+# # checkpointer = InMemoryStore() # 长期记忆，保持在内存中
+# # conn = sqlite3.connect("chat_history.db", check_same_thread=False)
+# # checkpointer = SqliteSaver(conn) #需要安装pip install langgraph-checkpoint-sqlite
+#
+#
+# DB_URI = "postgresql://postgres:!!AAaa123@localhost:5432/langgraph_db"
+#
+# # with (
+# #     PostgresStore.from_conn_string(DB_URI) as store,
+# #     PostgresSaver.from_conn_string(DB_URI) as checkpointer
+# # ):
+# #     # checkpointer.setup() # 第一次运行时执行一次。
+# #     # store.setup()
+# #     # pip install -U "psycopg[binary,pool]" langgraph langgraph-checkpoint-postgres
+# #     # pip install -U langgraph langgraph-checkpoint-redis
+# #     # 这是一个网络搜索的工具
+# #     search_tool = MySearchTool()
+# #     agent = create_react_agent(
+# #         llm,
+# #         tools=[runnable_tool, search_tool],
+# #         prompt="你是一个智能助手，尽可能的调用工具回答用户的问题",
+# #         checkpointer=checkpointer,
+# #         store=store,
+# #     )
+# #
+# #     config = {
+# #         "configurable": {
+# #             "thread_id": "1"
+# #         }
+# #     }
+# #
+# #     # rest = list(agent.get_state(config=config)) # 取短期记忆中，当前会话的所有上下文
+# #     # # rest = list(agent.get_state_history(config=config)) # 取长期记忆
+# #     # print(rest)
+# #     resp1 = agent.invoke(
+# #         {"messages": [{"role": "user", "content": "给我一个关于相声的报幕词？"}]},
+# #         config,
+# #     )
+# #
+# #     # print(resp1['messages'][-1]['content'])
+# #     print(resp1['messages'][-1].content)
+# #
+# #     resp2 = agent.invoke(
+# #         {"messages": [{"role": "user", "content": "再给我关于流行歌曲<<忐忑>>的"}]},
+# #         config,
+# #     )
+# #
+# #     # print(resp1['messages'][-1]['content'])
+# #     print(resp2['messages'][-1].content)
+#
+# with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
+#     checkpointer.setup() # 第一次运行时执行一次。
 #     # pip install -U "psycopg[binary,pool]" langgraph langgraph-checkpoint-postgres
-#     # pip install -U langgraph langgraph-checkpoint-redis
 #     # 这是一个网络搜索的工具
 #     search_tool = MySearchTool()
 #     agent = create_react_agent(
@@ -30,7 +68,6 @@ DB_URI = "postgresql://postgres:!!AAaa123@localhost:5432/langgraph_db"
 #         tools=[runnable_tool, search_tool],
 #         prompt="你是一个智能助手，尽可能的调用工具回答用户的问题",
 #         checkpointer=checkpointer,
-#         store=store,
 #     )
 #
 #     config = {
@@ -39,11 +76,11 @@ DB_URI = "postgresql://postgres:!!AAaa123@localhost:5432/langgraph_db"
 #         }
 #     }
 #
-#     # rest = list(agent.get_state(config=config)) # 取短期记忆中，当前会话的所有上下文
+#     # rest = list(agent.get_state(config=config)) # 取短期记忆中，当前会话的上下文
 #     # # rest = list(agent.get_state_history(config=config)) # 取长期记忆
 #     # print(rest)
 #     resp1 = agent.invoke(
-#         {"messages": [{"role": "user", "content": "给我一个关于相声的报幕词？"}]},
+#         {"messages": [{"role": "user", "content": "今天，北京的天气怎么样？"}]},
 #         config,
 #     )
 #
@@ -51,46 +88,9 @@ DB_URI = "postgresql://postgres:!!AAaa123@localhost:5432/langgraph_db"
 #     print(resp1['messages'][-1].content)
 #
 #     resp2 = agent.invoke(
-#         {"messages": [{"role": "user", "content": "再给我关于流行歌曲<<忐忑>>的"}]},
+#         {"messages": [{"role": "user", "content": "那，长沙呢？"}]},
 #         config,
 #     )
 #
 #     # print(resp1['messages'][-1]['content'])
 #     print(resp2['messages'][-1].content)
-
-with PostgresSaver.from_conn_string(DB_URI) as checkpointer:
-    checkpointer.setup() # 第一次运行时执行一次。
-    # pip install -U "psycopg[binary,pool]" langgraph langgraph-checkpoint-postgres
-    # 这是一个网络搜索的工具
-    # search_tool = MySearchTool()
-    agent = create_react_agent(
-        llm,
-        # tools=[runnable_tool, search_tool],
-        prompt="你是一个智能助手，尽可能的调用工具回答用户的问题",
-        checkpointer=checkpointer,
-    )
-
-    config = {
-        "configurable": {
-            "thread_id": "1"
-        }
-    }
-
-    # rest = list(agent.get_state(config=config)) # 取短期记忆中，当前会话的上下文
-    # # rest = list(agent.get_state_history(config=config)) # 取长期记忆
-    # print(rest)
-    resp1 = agent.invoke(
-        {"messages": [{"role": "user", "content": "今天，北京的天气怎么样？"}]},
-        config,
-    )
-
-    # print(resp1['messages'][-1]['content'])
-    print(resp1['messages'][-1].content)
-
-    resp2 = agent.invoke(
-        {"messages": [{"role": "user", "content": "那，长沙呢？"}]},
-        config,
-    )
-
-    # print(resp1['messages'][-1]['content'])
-    print(resp2['messages'][-1].content)
