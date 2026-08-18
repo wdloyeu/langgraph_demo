@@ -30,12 +30,12 @@ from agent.env_utils import DEEPSEEK_API_KEY, DEEPSEEK_BASE_URL, LOCAL_BASE_URL,
 #     model_kwargs={"response_format": {"type": "json_object"}},
 # )
 
-# llm = ChatOpenAI(
-#     model="gpt-4o-mini",
-#     temperature=0.8,
-#     api_key=OPENAI_API_KEY,
-#     base_url=OPENAI_BASE_URL,
-# )
+llm = ChatOpenAI(
+    model="gpt-4o-mini",
+    temperature=0.8,
+    api_key=OPENAI_API_KEY,
+    base_url=OPENAI_BASE_URL,
+)
 
 # llm = ChatOpenAI(
 #     model="claude-3-7-sonnet-20250219",
@@ -44,12 +44,12 @@ from agent.env_utils import DEEPSEEK_API_KEY, DEEPSEEK_BASE_URL, LOCAL_BASE_URL,
 #     base_url=OPENAI_BASE_URL,
 # )
 
-llm = ChatOpenAI(
-    model="deepseek-v4-flash",
-    temperature=0.8,
-    api_key=DEEPSEEK_API_KEY,
-    base_url=DEEPSEEK_BASE_URL,
-)
+# llm = ChatOpenAI(
+#     model="deepseek-v4-flash",
+#     temperature=0.8,
+#     api_key=DEEPSEEK_API_KEY,
+#     base_url=DEEPSEEK_BASE_URL,
+# )
 
 
 # 多模态大模型
